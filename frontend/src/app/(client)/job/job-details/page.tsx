@@ -7,15 +7,13 @@ import JobContent from "@/components/ui/client/job/job-details/JobContent";
 import CompanySidebar from "@/components/ui/client/job/job-details/CompanySidebar";
 import RelatedJobsSidebar from "@/components/ui/client/job/job-details/RelatedJobsSidebar";
 import ApplyModal from "@/components/ui/client/job/job-details/ApplyModal";
+import { useRouter } from "next/navigation"; // Import useRouter để thay thế navigate
 
-interface JobDetailPageProps {
-  params: {
-    client: string; // Từ dynamic route [client]
-    jobId?: string; // Thêm jobId nếu cần lấy từ URL (ví dụ: /client/job-details/jobId)
-  };
-}
-export default function JobDetailsPage({ params }: JobDetailPageProps) {
-  const { client, jobId } = params;  // Mock job data
+export default function JobDetailsPage({ params }: { params: { client: string; jobId?: string } }) {
+  const router = useRouter(); // Sử dụng useRouter thay vì navigate
+  const { client, jobId } = params; // Mock job data
+  const [showApplyModal, setShowApplyModal] = useState(false);
+
   const job = {
     id: jobId || "1",
     title: "Lập Trình Viên Frontend Senior",
@@ -33,21 +31,21 @@ export default function JobDetailsPage({ params }: JobDetailPageProps) {
     applicants: 45,
     tags: ["React", "TypeScript", "Node.js", "Remote", "Senior Level"],
     description: `
-Chúng tôi đang tìm kiếm một Senior Frontend Developer có kinh nghiệm để gia nhập đội ngũ phát triển sản phẩm của chúng tôi. 
-Bạn sẽ chịu trách nhiệm xây dựng và duy trì các ứng dụng web hiện đại, làm việc chặt chẽ với đội thiết kế UX/UI và backend.
+    Chúng tôi đang tìm kiếm một Senior Frontend Developer có kinh nghiệm để gia nhập đội ngũ phát triển sản phẩm của chúng tôi. 
+    Bạn sẽ chịu trách nhiệm xây dựng và duy trì các ứng dụng web hiện đại, làm việc chặt chẽ với đội thiết kế UX/UI và backend.
 
-🔹 Trách nhiệm chính:
-• Phát triển và duy trì ứng dụng web với React, TypeScript  
-• Hợp tác với đội thiết kế để hiện thực hóa UI/UX  
-• Tối ưu hiệu suất và trải nghiệm người dùng  
-• Code review & mentoring junior developer  
-• Tham gia vào quy trình phát triển sản phẩm
+    🔹 Trách nhiệm chính:
+    • Phát triển và duy trì ứng dụng web với React, TypeScript  
+    • Hợp tác với đội thiết kế để hiện thực hóa UI/UX  
+    • Tối ưu hiệu suất và trải nghiệm người dùng  
+    • Code review & mentoring junior developer  
+    • Tham gia vào quy trình phát triển sản phẩm
 
-🔹 Môi trường làm việc:
-• Văn phòng hiện đại tại trung tâm TP.HCM  
-• Flexible working time  
-• Remote 2-3 ngày/tuần  
-• Team building & hoạt động nội bộ thường xuyên
+    🔹 Môi trường làm việc:
+    • Văn phòng hiện đại tại trung tâm TP.HCM  
+    • Flexible working time  
+    • Remote 2-3 ngày/tuần  
+    • Team building & hoạt động nội bộ thường xuyên
     `,
     requirements: [
       "3+ năm kinh nghiệm với React và TypeScript",
@@ -119,9 +117,7 @@ Bạn sẽ chịu trách nhiệm xây dựng và duy trì các ứng dụng web 
 
   const handleApply = () => {
     setShowApplyModal(false);
-    if (navigate) {
-      navigate("cv-builder");
-    }
+    router.push("/cv-builder"); // Sử dụng router.push thay vì navigate
   };
 
   return (
@@ -141,7 +137,7 @@ Bạn sẽ chịu trách nhiệm xây dựng và duy trì các ứng dụng web 
         {/* Back button */}
         <div className="flex items-center mb-6">
           <button
-            onClick={() => navigate?.("jobs")}
+            onClick={() => router.push("/jobs")}
             className="flex items-center text-gray-600 hover:text-[#f26b38] transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -155,7 +151,7 @@ Bạn sẽ chịu trách nhiệm xây dựng và duy trì các ứng dụng web 
             <JobHeader
               job={job}
               onApply={() => setShowApplyModal(true)}
-              onViewCompany={() => navigate?.("company-detail", "1")}
+              onViewCompany={() => router.push("/company-detail/1")}
             />
             <JobContent job={job} />
           </div>
@@ -164,12 +160,12 @@ Bạn sẽ chịu trách nhiệm xây dựng và duy trì các ứng dụng web 
           <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] lg:overflow-y-auto space-y-6">
             <CompanySidebar
               companyInfo={job.companyInfo}
-              onViewCompanyDetail={() => navigate?.("company-detail", "1")}
+              onViewCompanyDetail={() => router.push("/company-detail/1")}
             />
             <RelatedJobsSidebar
               relatedJobs={relatedJobs}
-              onJobClick={(id) => navigate?.("job-detail", id)}
-              onViewMore={() => navigate?.("jobs")}
+              onJobClick={(id) => router.push(`/job-detail/${id}`)}
+              onViewMore={() => router.push("/jobs")}
             />
           </div>
         </div>
