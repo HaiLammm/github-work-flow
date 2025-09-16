@@ -10,39 +10,49 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x] # Sử dụng phiên bản 18.x vì Next.js 15.4.1
+        node-version: [18.x] # Phù hợp với Next.js 15.4.1
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm' # Cấu hình cache cho pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8 # Phiên bản pnpm mới nhất, có thể thay đổi nếu cần
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8 # Sử dụng phiên bản pnpm mới nhất
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+          cache-dependency-path: frontend/pnpm-lock.yaml # Chỉ cache dựa trên file lock trong frontend
 
-    - name: Add pnpm to PATH
-      run: echo "$HOME/.pnpm" >> $GITHUB_PATH
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-    - name: Install dependencies
-      run: pnpm install
-      working-directory: ./frontend
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-    - name: Build frontend
-      run: pnpm run build
-      working-directory: ./frontend
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ./frontend
 
-    - name: Run tests
-      run: pnpm test --if-present
-      working-directory: ./frontend
+      - name: Build frontend
+        run: pnpm run build
+        working-directory: ./frontend
+
+      - name: Run tests
+        run: pnpm test --if-present
+        working-directory: ./frontend
