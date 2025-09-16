@@ -1,4 +1,4 @@
-name: Node.js CI for Frontend
+name: Build and Run Frontend with pnpm
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x] # Hỗ trợ các phiên bản Node.js
+        node-version: [18.x] # Sử dụng phiên bản 18.x vì Next.js 15.4.1
 
     steps:
     - name: Checkout code
@@ -25,16 +25,24 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'pnpm' # Cấu hình cache cho pnpm
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8 # Sử dụng phiên bản pnpm mới nhất
+
+    - name: Add pnpm to PATH
+      run: echo "$HOME/.pnpm" >> $GITHUB_PATH
 
     - name: Install dependencies
-      run: npm ci
+      run: pnpm install
       working-directory: ./frontend
 
     - name: Build frontend
-      run: npm run build --if-present
+      run: pnpm run build
       working-directory: ./frontend
 
     - name: Run tests
-      run: npm test
+      run: pnpm test --if-present
       working-directory: ./frontend
