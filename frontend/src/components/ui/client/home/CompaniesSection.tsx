@@ -14,7 +14,7 @@ const CompaniesSection = () => {
   const companies = [
      {
   id: 1,
-  name: 'Lam Company',
+  name: 'TechCorp Innovation',
   logo: company,
   industry: 'Technology1',
   location: 'Ho Chi Minh City',
