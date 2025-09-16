@@ -8,10 +8,14 @@ import CompanySidebar from "@/components/ui/client/job/job-details/CompanySideba
 import RelatedJobsSidebar from "@/components/ui/client/job/job-details/RelatedJobsSidebar";
 import ApplyModal from "@/components/ui/client/job/job-details/ApplyModal";
 
-export default function JobDetailPage({ jobId, navigate }: JobDetailPageProps) {
-  const [showApplyModal, setShowApplyModal] = useState(false);
-
-  // Mock job data
+interface JobDetailPageProps {
+  params: {
+    client: string; // Từ dynamic route [client]
+    jobId?: string; // Thêm jobId nếu cần lấy từ URL (ví dụ: /client/job-details/jobId)
+  };
+}
+export default function JobDetailsPage({ params }: JobDetailPageProps) {
+  const { client, jobId } = params;  // Mock job data
   const job = {
     id: jobId || "1",
     title: "Lập Trình Viên Frontend Senior",
