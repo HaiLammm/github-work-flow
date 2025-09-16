@@ -8,11 +8,6 @@ import CompanySidebar from "@/components/ui/client/job/job-details/CompanySideba
 import RelatedJobsSidebar from "@/components/ui/client/job/job-details/RelatedJobsSidebar";
 import ApplyModal from "@/components/ui/client/job/job-details/ApplyModal";
 
-interface JobDetailPageProps {
-  jobId: string | null;
-  navigate?: (page: string, id?: string) => void;
-}
-
 export default function JobDetailPage({ jobId, navigate }: JobDetailPageProps) {
   const [showApplyModal, setShowApplyModal] = useState(false);
 
