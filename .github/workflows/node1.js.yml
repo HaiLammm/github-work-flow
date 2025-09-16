@@ -1,0 +1,43 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: frontend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-run-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Phù hợp với Next.js 15.4.1
+          cache: 'pnpm' # Cấu hình cache cho pnpm
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8 # Sử dụng phiên bản pnpm mới nhất, bạn có thể thay đổi nếu cần
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ./frontend
+
+      - name: Build frontend
+        run: pnpm run build
+        working-directory: ./frontend
+
+      - name: Run frontend
+        run: pnpm run start
+        working-directory: ./frontend
